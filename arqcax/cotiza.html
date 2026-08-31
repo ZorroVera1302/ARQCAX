@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Cotiza tu proyecto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+    <link rel="stylesheet" href="cotiza.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="logo-arqcax.png">
+    <style>
+        .formulario-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 0 20px 60px;
+        }
+
+        .formulario {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 480px;
+            animation: slideDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .formulario.activo {
+            display: flex;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .formulario h3 {
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+            margin: 0 0 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .formulario label {
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: -8px;
+        }
+
+        .formulario input,
+        .formulario select {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            padding: 12px;
+            outline: none;
+            transition: border-color 0.25s, background 0.25s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .formulario input::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+
+        .formulario input:focus,
+        .formulario select:focus {
+            border-color: white;
+            background: transparent;
+        }
+
+        .formulario select option {
+            background: #1d1d1d;
+            color: white;
+        }
+
+        .btn-enviar {
+            margin-top: 8px;
+            padding: 14px;
+            background: aqua;
+            color: #111;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-enviar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0,255,255,0.3);
+        }
+
+        .btn-enviar:disabled {
+            background: rgb(95, 95, 95);
+            color: rgba(255,255,255,0.6);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .bnt.seleccionado {
+            background: rgb(0, 185, 185);
+            color: #111;
+        }
+
+        /* Mini ventana de avisos, reemplaza al alert() nativo del navegador */
+        .aviso-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .aviso-overlay.activo {
+            display: flex;
+        }
+
+        .aviso-caja {
+            background: rgb(35, 35, 35);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 28px 26px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            animation: slideDown 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .aviso-icono {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .aviso-mensaje {
+            color: white;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .aviso-btn {
+            background: aqua;
+            color: #111;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 10px 26px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s;
+        }
+
+        .aviso-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Botones de selección (Sí/No) para la inversión mínima */
+        .opciones-inversion {
+            display: flex;
+            gap: 10px;
+        }
+
+        .opcion-inversion {
+            flex: 1;
+            background: rgb(55, 55, 55);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .opcion-inversion:hover {
+            background: rgb(0, 185, 185);
+            color: #111;
+        }
+
+        .opcion-inversion.seleccionado {
+            background: aqua;
+            color: #111;
+            font-weight: bold;
+        }
+
+        /* Quita las flechitas del campo numérico (terreno) en ambos formularios */
+        .sin-flechas::-webkit-outer-spin-button,
+        .sin-flechas::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .sin-flechas {
+            -moz-appearance: textfield;
+        }
+
+        /* Footer (igual estilo que arqcax.html) */
+        footer {
+            background: rgb(20, 20, 20);
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 40px 20px 30px;
+            margin-top: 60px;
+            font-family: Arial, sans-serif;
+        }
+
+        footer img {
+            width: 130px;
+            height: auto;
+            margin-bottom: 18px;
+        }
+
+        .footer-enlaces {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 22px;
+            margin-bottom: 18px;
+        }
+
+        .footer-enlaces a,
+        .footer-enlaces button.btn {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            padding: 0;
+        }
+
+        .footer-enlaces a:hover,
+        .footer-enlaces button.btn:hover {
+            color: aqua;
+        }
+
+        .footer-redes {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 18px;
+            font-size: 18px;
+        }
+
+        .footer-redes a {
+            color: rgba(255, 255, 255, 0.85);
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .footer-redes a:hover {
+            color: aqua;
+            transform: translateY(-2px);
+        }
+
+        footer p {
+            font-size: 12px;
+            margin: 4px 0;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .footer-privacidad a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: underline;
+        }
+
+        .footer-privacidad a:hover {
+            color: aqua;
+        }
+    </style>
+</head>
+<body>
+    <div class="aviso-overlay" id="aviso-overlay">
+        <div class="aviso-caja">
+            <div class="aviso-icono" id="aviso-icono">⚠️</div>
+            <div class="aviso-mensaje" id="aviso-mensaje"></div>
+            <button class="aviso-btn" onclick="cerrarAviso()">Aceptar</button>
+        </div>
+    </div>
+
+    <script>
+        // Mini ventana de avisos (reemplaza al alert() nativo del navegador)
+        function mostrarAviso(mensaje, icono) {
+            document.getElementById("aviso-mensaje").textContent = mensaje;
+            document.getElementById("aviso-icono").textContent = icono || "⚠️";
+            document.getElementById("aviso-overlay").classList.add("activo");
+        }
+
+        function cerrarAviso() {
+            document.getElementById("aviso-overlay").classList.remove("activo");
+        }
+
+        // Para secciones que todavía no existen en la página (Sobre nosotros, Servicios, Galería)
+        function mostrarProximamente() {
+            mostrarAviso("Estamos haciendo los planos de esta página.", "🛠️");
+        }
+
+        // Evita que la web se muestre embebida (clickjacking) en páginas de terceros.
+        // La cabecera CSP "frame-ancestors" cumple la misma función a nivel de navegador,
+        // pero solo funciona si se envía como encabezado HTTP real (no vía <meta>), así que
+        // esta comprobación en JavaScript queda como segunda barrera independiente.
+        if (window.self !== window.top) {
+            try { window.top.location = window.location.href; } catch (e) { document.documentElement.innerHTML = ""; }
+        }
+    </script>
+    <h1 onclick="window.location.href='ARQCAX.html'" aria-label="Ir al inicio">
+        <img src="LOGO.png" alt="ARQCAX Arquitectura y Diseño">
+    </h1>
+
+    <div>
+        <h2>Elige tu país</h2>
+
+        <div class="botones">
+            <button class="bnt" id="btn-peru" onclick="mostrarFormulario('peru')">
+                Perú
+            </button>
+            <button class="bnt" id="btn-otro" onclick="mostrarFormulario('otro')">
+                Otro
+            </button>
+        </div>
+
+        <div class="formulario-wrapper">
+
+            <!-- Formulario PERÚ -->
+            <div class="formulario" id="form-peru">
+                <input class="campo-trampa" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button class="btn-cerrar-formulario" onclick="cerrarFormulario()" style="
+        align-self: flex-end;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        line-height: 1;
+    ">✖</button>
+    <h3><i class="fas fa-map-marker-alt" style="color: white;"></i> &nbsp;Cotiza tu proyecto en Perú</h3>
+
+                <label>Nombre</label>
+                <input type="text" id="peru-nombre" placeholder="Tu nombre" required maxlength="60">
+
+                <label>Apellido</label>
+                <input type="text" id="peru-apellido" placeholder="Tu apellido" required maxlength="60">
+
+                <label>Correo electrónico</label>
+                <input type="email" id="peru-correo" placeholder="correo@ejemplo.com" required maxlength="100">
+
+                <label>
+                   Número de celular
+                </label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" value="+51" style="width: 60px; text-align: center;" readonly>
+                    <input type="tel" id="peru-celular" placeholder="987 654 321" required style="flex: 1;" maxlength="9" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <label>¿Cuánto mide tu terreno y cuantos pisos piensas construir? (largo x ancho)</label>
+                <input type="text" id="peru-terreno" placeholder="Ej: 8 x 20, 2 pisos más azotea" required maxlength="100">
+
+                <label>Departamento / Región</label>
+                <select>
+                    <option value="" disabled selected>Selecciona tu departamento</option>
+                    <option>Amazonas</option>
+                    <option>Áncash</option>
+                    <option>Apurímac</option>
+                    <option>Arequipa</option>
+                    <option>Ayacucho</option>
+                    <option>Cajamarca</option>
+                    <option>Callao</option>
+                    <option>Cusco</option>
+                    <option>Huancavelica</option>
+                    <option>Huánuco</option>
+                    <option>Ica</option>
+                    <option>Junín</option>
+                    <option>La Libertad</option>
+                    <option>Lambayeque</option>
+                    <option>Lima</option>
+                    <option>Loreto</option>
+                    <option>Madre de Dios</option>
+                    <option>Moquegua</option>
+                    <option>Pasco</option>
+                    <option>Piura</option>
+                    <option>Puno</option>
+                    <option>San Martín</option>
+                    <option>Tacna</option>
+                    <option>Tumbes</option>
+                    <option>Ucayali</option>
+                </select>
+
+                <label>Lugar / Distrito</label>
+                <input type="text" id="peru-distrito" placeholder="Comas, Lima" maxlength="100">
+
+                <label>¿Tienes una inversión mínima de 2500 soles?</label>
+                <div class="opciones-inversion" id="inversion-peru">
+                    <button type="button" class="opcion-inversion" data-valor="Sí" onclick="seleccionarInversion(this)">Sí</button>
+                    <button type="button" class="opcion-inversion" data-valor="No" onclick="seleccionarInversion(this)">No</button>
+                </div>
+
+                <label>Selecciona una fecha</label>
+<div id="calendario-peru" class="calendario"></div>
+
+
+<label>Selecciona un horario</label>
+<div id="horarios-peru" class="horarios" style="display:none;"></div>
+
+                <button class="btn-enviar" type="button" onclick="enviarCotizacionPeru(this)">Enviar cotización →</button>
+            </div>
+
+            <!-- Formulario OTRO PAÍS -->
+            <div class="formulario" id="form-otro">
+                <input class="campo-trampa" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button class="btn-cerrar-formulario" onclick="cerrarFormulario()" style="
+        align-self: flex-end;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        line-height: 1;
+    ">✖</button>
+   <h3><i class="fas fa-globe" style="color: white;"></i> &nbsp;Cotiza tu proyecto internacional</h3>
+
+                <label>Nombre</label>
+                <input type="text" id="otro-nombre" placeholder="Tu nombre" required maxlength="60">
+
+                <label>Apellido</label>
+                <input type="text" id="otro-apellido" placeholder="Tu apellido" required maxlength="60">
+
+                <label>Correo electrónico</label>
+                <input type="email" id="otro-correo" placeholder="correo@ejemplo.com" required maxlength="100">
+
+                <label>¿Cuánto mide tu terreno y cuantos pisos piensas construir? (largo x ancho)</label>
+                <input type="text" id="otro-terreno" placeholder="Ej: 8 x 20, 2 pisos más azotea" maxlength="100">
+
+                <label>País</label>
+<select id="select-pais" onchange="actualizarCodigo()">
+    <option value="" disabled selected>Selecciona tu país</option>
+    <option value="+54">Argentina</option>
+    <option value="+591">Bolivia</option>
+    <option value="+55">Brasil</option>
+    <option value="+56">Chile</option>
+    <option value="+57">Colombia</option>
+    <option value="+506">Costa Rica</option>
+    <option value="+53">Cuba</option>
+    <option value="+593">Ecuador</option>
+    <option value="+503">El Salvador</option><option value="+502">Guatemala</option>
+    <option value="+504">Honduras</option>
+    <option value="+52">México</option>
+    <option value="+505">Nicaragua</option>
+    <option value="+507">Panamá</option>
+    <option value="+595">Paraguay</option>
+    <option value="+1">República Dominicana</option>
+    <option value="+598">Uruguay</option>
+    <option value="+58">Venezuela</option>
+</select>
+
+<label>Número de celular</label>
+<div style="display: flex; gap: 8px;">
+    <input type="text" id="codigo-pais" value="" placeholder="+00" style="width: 70px; text-align: center;" readonly>
+    <input type="tel" id="otro-celular" placeholder="987 654 321" required style="flex: 1;" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+</div>
+
+<label>¿Tienes una inversión mínima de 550 USD?</label>
+<div class="opciones-inversion" id="inversion-otro">
+    <button type="button" class="opcion-inversion" data-valor="Sí" onclick="seleccionarInversion(this)">Sí</button>
+    <button type="button" class="opcion-inversion" data-valor="No" onclick="seleccionarInversion(this)">No</button>
+</div>
+
+<label>Selecciona una fecha</label>
+<div id="calendario-otro" class="calendario"></div>
+
+<label>Selecciona un horario</label>
+<div id="horarios-otro" class="horarios" style="display:none;"></div>
+
+<button class="btn-enviar" type="button" onclick="enviarCotizacionOtro(this)">Enviar cotización →</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Barra superior fija -->
+    <div class="contenedor">
+        <button class="btn" onclick="window.location.href='ARQCAX.html'">
+            ATRAS
+        </button>
+        <span class="separador-nav" aria-hidden="true"></span>
+        <button class="btn" onclick="mostrarProximamente()">SOBRE NOSOTROS</button>
+        <span class="separador-nav" aria-hidden="true"></span>
+        <button class="btn" onclick="mostrarProximamente()">GALERÍA</button>
+        <div class="top-derecha">
+            <button class="btn btn-menu" onclick="toggleMenu()">☰</button>
+        </div>
+        <div id="menu" class="menu-lateral">
+            <button class="btn btn-cerrar" onclick="toggleMenu()">✖</button>
+            <button class="btn" type="button" onclick="mostrarProximamente()">Servicios</button>
+            <button class="btn contacto-menu" type="button" onclick="toggleContacto()">Contacto</button>
+            <a id="numero-contacto" class="numero-contacto" href="https://wa.me/51968255952" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> +51 968 255 952</a>
+            <hr>
+            <div>
+                <a href="https://www.instagram.com/arqcax/" class="btn" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="https://www.facebook.com/Arqcax" class="btn" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="https://www.tiktok.com/@arqcax" class="btn" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i> TikTok</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <img src="LOGO.png" alt="ARQCAX Arquitectura y Diseño">
+        <div class="footer-enlaces">
+            <button class="btn" type="button" onclick="mostrarProximamente()">Sobre nosotros</button>
+            <a href="ARQCAX.html">Inicio</a>
+            <a href="https://wa.me/51968255952" target="_blank" rel="noopener noreferrer">Contacto</a>
+        </div>
+        <div class="footer-redes">
+            <a href="https://www.instagram.com/arqcax/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/Arqcax" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.tiktok.com/@arqcax" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p>© 2026 ARQCAX · Arquitectura y Diseño</p>
+        <p class="footer-privacidad">Tus datos se usan únicamente para responder a tu solicitud de cotización. <a href="privacidad.html">Política de Privacidad y Términos y Condiciones</a>.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById("menu").classList.toggle("activo");
+        }
+
+        function toggleContacto() {
+            document.getElementById("numero-contacto").classList.toggle("activo");
+        }
+
+        function actualizarCodigo() {
+    const select = document.getElementById("select-pais");
+    const codigo = document.getElementById("codigo-pais");
+    codigo.value = select.value;
+}
+
+        // Selección tipo botón (Sí/No) para la inversión mínima
+        function seleccionarInversion(btn) {
+            btn.parentElement.querySelectorAll(".opcion-inversion").forEach(b => b.classList.remove("seleccionado"));
+            btn.classList.add("seleccionado");
+
+            const botonEnviar = btn.closest(".formulario").querySelector(".btn-enviar");
+            const noCumpleInversion = btn.dataset.valor === "No";
+            botonEnviar.disabled = noCumpleInversion;
+            botonEnviar.title = noCumpleInversion ? "No es posible enviar una cotización sin la inversión mínima." : "";
+
+            if (noCumpleInversion) {
+                mostrarAviso("Aún no cuentas con el dinero mínimo para trabajar con nosotros.", "😔");
+            }
+        }
+
+        // --- Seguridad: saneamiento de datos antes de enviarlos ---
+
+        // Evita inyección de fórmulas en Google Sheets/Excel (un valor que empiece con
+        // =, +, -, @ puede ejecutarse como fórmula al abrirse en la hoja de cálculo)
+        // y elimina etiquetas HTML para prevenir inyección de scripts.
+        function sanitizarTexto(valor) {
+            if (!valor) return "";
+            let limpio = valor.trim().replace(/[<>]/g, "");
+            if (/^[=+\-@\t\r]/.test(limpio)) {
+                limpio = " " + limpio;
+            }
+            return limpio.slice(0, 150);
+        }
+
+        function correoValido(correo) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+        }
+
+        // "Trampa de tiempo": un humano tarda al menos un par de segundos en llenar el
+        // formulario; un bot automatizado normalmente lo envía casi instantáneamente.
+        const tiempoApertura = {};
+        function registrarAperturaFormulario(idFormulario) {
+            tiempoApertura[idFormulario] = Date.now();
+        }
+        function envioSospechosamenteRapido(idFormulario, minimoMs = 2500) {
+            const inicio = tiempoApertura[idFormulario];
+            return !inicio || (Date.now() - inicio) < minimoMs;
+        }
+
+        function cerrarFormulario() {
+    const formPeruAbierto = document.getElementById("form-peru").classList.contains("activo");
+    const formOtroAbierto = document.getElementById("form-otro").classList.contains("activo");
+
+    // Si se cancela sin enviar, libera la hora que tenía reservada para el otro formulario
+    if (formPeruAbierto) { delete reservasTemporales["horarios-peru"]; actualizarHorariosVisibles("horarios-peru"); }
+    if (formOtroAbierto) { delete reservasTemporales["horarios-otro"]; actualizarHorariosVisibles("horarios-otro"); }
+
+    document.getElementById("form-peru").classList.remove("activo");
+    document.getElementById("form-otro").classList.remove("activo");
+    document.getElementById("btn-peru").classList.remove("seleccionado");
+    document.getElementById("btn-otro").classList.remove("seleccionado");
+}
+
+        function mostrarFormulario(tipo) {
+            const formPeru = document.getElementById("form-peru");
+            const formOtro = document.getElementById("form-otro");
+            const btnPeru  = document.getElementById("btn-peru");
+            const btnOtro  = document.getElementById("btn-otro");
+
+            formPeru.classList.remove("activo");
+            formOtro.classList.remove("activo");
+            btnPeru.classList.remove("seleccionado");
+            btnOtro.classList.remove("seleccionado");
+
+            if (tipo === "peru") {
+                formPeru.style.animation = "none";
+                formPeru.offsetHeight;
+                formPeru.style.animation = "";
+                formPeru.classList.add("activo");
+                btnPeru.classList.add("seleccionado");
+                registrarAperturaFormulario("form-peru");
+            } else {
+                formOtro.style.animation = "none";
+                formOtro.offsetHeight;
+                formOtro.style.animation = "";
+                formOtro.classList.add("activo");
+                btnOtro.classList.add("seleccionado");
+                registrarAperturaFormulario("form-otro");
+            }
+        }
+
+        const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const dias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+
+const horariosMañana = ["10:00 AM","11:00 AM","12:00 PM"];
+const horariosTarde  = ["3:00 PM","4:00 PM","5:00 PM","6:00 PM"];
+const reservasTemporales = {};
+
+// Feriados nacionales del Perú 2026 (fuente: gob.pe). No se atiende en estas fechas.
+// Nota: si el calendario avanza a otro año, los feriados de fecha móvil (Semana Santa)
+// deben actualizarse manualmente.
+const feriados = [
+    "2026-01-01", // Año Nuevo
+    "2026-04-02", // Jueves Santo
+    "2026-04-03", // Viernes Santo
+    "2026-05-01", // Día del Trabajo
+    "2026-06-07", // Batalla de Arica y Día de la Bandera
+    "2026-06-29", // San Pedro y San Pablo
+    "2026-07-23", // Día de la Fuerza Aérea del Perú
+    "2026-07-28", // Fiestas Patrias
+    "2026-07-29", // Fiestas Patrias
+    "2026-08-06", // Batalla de Junín
+    "2026-08-30", // Santa Rosa de Lima
+    "2026-10-01", // Fecha no disponible
+    "2026-10-08", // Combate de Angamos
+    "2026-11-01", // Día de Todos los Santos
+    "2026-12-08", // Inmaculada Concepción
+    "2026-12-09", // Batalla de Ayacucho
+    "2026-12-25", // Navidad
+];
+
+// Fechas en las que solo se atiende en horario de mañana (no hay horarios de tarde)
+const soloManana = ["2026-09-27", "2026-09-28", "2026-09-29", "2026-09-30"];
+
+function esFechaDisponible(fechaISO, fecha, hoy) {
+    const diaSemana = fecha.getDay();
+    const esFinDeSemana = diaSemana === 0 || diaSemana === 6;
+    const esPasado = fecha < new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+    const esFeriado = feriados.includes(fechaISO);
+    return !(esFinDeSemana || esPasado || esFeriado);
+}
+
+function crearCalendario(idCalendario, idHorarios) {
+    const hoy = new Date();
+    let mes = hoy.getMonth();
+    let anio = hoy.getFullYear();
+
+    function render() {
+        const contenedor = document.getElementById(idCalendario);
+        contenedor.innerHTML = "";
+
+        // Header
+        const header = document.createElement("div");
+        header.className = "calendario-header";
+        header.innerHTML = `
+            <button onclick="cambiarMes('${idCalendario}','${idHorarios}',-1)">‹</button>
+            <span>${meses[mes]} ${anio}</span>
+            <button onclick="cambiarMes('${idCalendario}','${idHorarios}',1)">›</button>
+        `;
+        contenedor.appendChild(header);
+
+        // Nombres días
+        dias.forEach(d => {
+            const el = document.createElement("div");
+            el.className = "dia-nombre";
+            el.textContent = d;
+            contenedor.appendChild(el);
+        });
+
+        // Primer día del mes
+        const primerDia = new Date(anio, mes, 1).getDay();
+        for (let i = 0; i < primerDia; i++) {
+            const vacio = document.createElement("div");
+            vacio.className = "dia vacio";
+            contenedor.appendChild(vacio);
+        }
+
+        // Días del mes
+        const totalDias = new Date(anio, mes + 1, 0).getDate();
+        for (let d = 1; d <= totalDias; d++) {
+            const fecha = new Date(anio, mes, d);
+            const fechaISO = `${anio}-${String(mes + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            const btn = document.createElement("button");
+            btn.className = "dia";
+            btn.textContent = d;
+
+            if (!esFechaDisponible(fechaISO, fecha, hoy)) {
+                btn.classList.add("deshabilitado");
+                btn.disabled = true;
+            } else {
+                btn.onclick = () => seleccionarDia(btn, idHorarios, d, mes, anio);
+            }
+
+            contenedor.appendChild(btn);
+        }
+
+        // Guardar estado del mes y año en el contenedor
+        contenedor.dataset.mes = mes;
+        contenedor.dataset.anio = anio;
+    }
+
+    window[`cambiarMes_${idCalendario}`] = function(dir) {
+        mes += dir;
+        if (mes > 11) { mes = 0; anio++; }
+        if (mes < 0)  { mes = 11; anio--; }
+        render();
+    };
+
+    render();
+}
+
+function cambiarMes(idCalendario, idHorarios, dir) {
+    const contenedor = document.getElementById(idCalendario);
+    let mes = parseInt(contenedor.dataset.mes) + dir;
+    let anio = parseInt(contenedor.dataset.anio);
+    if (mes > 11) { mes = 0; anio++; }
+    if (mes < 0)  { mes = 11; anio--; }
+    contenedor.dataset.mes = mes;
+    contenedor.dataset.anio = anio;
+
+    // Re-render
+    const hoy = new Date();
+    contenedor.innerHTML = "";
+
+    const header = document.createElement("div");
+    header.className = "calendario-header";
+    header.innerHTML = `
+        <button onclick="cambiarMes('${idCalendario}','${idHorarios}',-1)">‹</button>
+        <span>${meses[mes]} ${anio}</span>
+        <button onclick="cambiarMes('${idCalendario}','${idHorarios}',1)">›</button>
+    `;
+    contenedor.appendChild(header);
+
+    dias.forEach(d => {
+        const el = document.createElement("div");
+        el.className = "dia-nombre";
+        el.textContent = d;
+        contenedor.appendChild(el);
+    });
+
+    const primerDia = new Date(anio, mes, 1).getDay();
+    for (let i = 0; i < primerDia; i++) {
+        const vacio = document.createElement("div");
+        vacio.className = "dia vacio";
+        contenedor.appendChild(vacio);
+    }
+
+    const totalDias = new Date(anio, mes + 1, 0).getDate();
+    for (let d = 1; d <= totalDias; d++) {
+        const fecha = new Date(anio, mes, d);
+        const fechaISO = `${anio}-${String(mes + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+        const btn = document.createElement("button");
+        btn.className = "dia";
+        btn.textContent = d;
+
+        if (!esFechaDisponible(fechaISO, fecha, hoy)) {
+            btn.classList.add("deshabilitado");
+            btn.disabled = true;
+        } else {
+            btn.onclick = () => seleccionarDia(btn, idHorarios, d, mes, anio);
+        }
+
+        contenedor.appendChild(btn);
+    }
+}
+
+// Evita que una misma hora se elija en Perú e Internacional para la misma fecha.
+function seleccionarDia(btn, idHorarios, dia, mes, anio) {
+    btn.closest(".calendario").querySelectorAll(".dia").forEach(b => b.classList.remove("seleccionado"));
+    btn.classList.add("seleccionado");
+    delete reservasTemporales[idHorarios];
+
+    const fechaISO = `${anio}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+    const contenedor = document.getElementById(idHorarios);
+    contenedor.dataset.fecha = fechaISO;
+    renderHorarios(idHorarios);
+    actualizarHorariosVisibles(idHorarios);
+}
+
+function esHoraPasadaHoy(fechaISO, hora) {
+    const ahora = new Date();
+    const hoyISO = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, "0")}-${String(ahora.getDate()).padStart(2, "0")}`;
+    if (fechaISO !== hoyISO) return false;
+
+    const [horaTexto, periodo] = hora.split(" ");
+    let horaNumero = parseInt(horaTexto.split(":")[0], 10);
+    if (periodo === "PM" && horaNumero !== 12) horaNumero += 12;
+    if (periodo === "AM" && horaNumero === 12) horaNumero = 0;
+    return horaNumero <= ahora.getHours();
+}
+function renderHorarios(idHorarios) {
+    const contenedor = document.getElementById(idHorarios);
+    const otraLista = idHorarios === "horarios-peru" ? "horarios-otro" : "horarios-peru";
+    const fechaISO = contenedor.dataset.fecha;
+    contenedor.style.display = "flex";
+    contenedor.innerHTML = "";
+
+    const horariosDelDia = soloManana.includes(fechaISO) ? horariosMañana : [...horariosMañana, ...horariosTarde];
+
+    horariosDelDia.forEach(hora => {
+        const clave = `${fechaISO}|${hora}`;
+        const boton = document.createElement("button");
+        const reservadoEnOtroFormulario = reservasTemporales[otraLista] === clave;
+        const horaPasada = esHoraPasadaHoy(fechaISO, hora);
+        if (horaPasada && reservasTemporales[idHorarios] === clave) delete reservasTemporales[idHorarios];
+
+        boton.className = "horario-btn";
+        boton.textContent = hora;
+        if (horaPasada || reservadoEnOtroFormulario) {
+            boton.classList.add("deshabilitado");
+            boton.disabled = true;
+            boton.title = horaPasada
+                ? "Este horario ya pasó."
+                : "Este horario ya está seleccionado en el otro formulario.";
+        } else {
+            boton.onclick = () => {
+                reservasTemporales[idHorarios] = clave;
+                renderHorarios(idHorarios);
+                actualizarHorariosVisibles(idHorarios);
+            };
+        }
+        if (reservasTemporales[idHorarios] === clave) boton.classList.add("seleccionado");
+        contenedor.appendChild(boton);
+    });
+}
+function actualizarHorariosVisibles(idModificado) {
+    const otroId = idModificado === "horarios-peru" ? "horarios-otro" : "horarios-peru";
+    const otro = document.getElementById(otroId);
+    if (otro.dataset.fecha) renderHorarios(otroId);
+}
+
+// Iniciar calendarios
+crearCalendario("calendario-peru", "horarios-peru");
+crearCalendario("calendario-otro", "horarios-otro");
+
+// Mantiene bloqueadas las horas que van venciendo mientras el formulario está abierto.
+setInterval(() => {
+    ["horarios-peru", "horarios-otro"].forEach(idHorarios => {
+        if (document.getElementById(idHorarios).dataset.fecha) renderHorarios(idHorarios);
+    });
+}, 60000);
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpVb8hidplAojfMfPnSnVuzgh6PHf6u4JnvyLd7g2nZc8ZZkCKROduduYzxrbeJTiO/exec";
+
+async function procesarEnvio(datos, boton) {
+    const formulario = boton.closest(".formulario");
+    const campoTrampa = formulario.querySelector(".campo-trampa");
+    const ultimoEnvio = Number(localStorage.getItem("arqcax_ultimo_envio") || 0);
+
+    // Los bots suelen llenar campos invisibles; las personas nunca los ven.
+    if (campoTrampa.value) return;
+    if (Date.now() - ultimoEnvio < 60000) {
+        mostrarAviso("Por seguridad, espera un minuto antes de enviar otra cotización.", "⏳");
+        return;
+    }
+
+    const textoOriginal = boton.textContent;
+    boton.disabled = true;
+    boton.textContent = "Enviando…";
+
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(datos)
+        });
+
+        localStorage.setItem("arqcax_ultimo_envio", String(Date.now()));
+        mostrarAviso("¡Tu cotización ha sido enviada con éxito! El arquitecto se pondrá en contacto contigo pronto.", "✅");
+    } catch (error) {
+        console.error("Error al enviar:", error);
+        mostrarAviso("No se pudo enviar tu cotización. Revisa tu conexión e inténtalo nuevamente.", "❌");
+    } finally {
+        boton.disabled = false;
+        boton.textContent = textoOriginal;
+    }
+}
+
+        function terrenoValido(terreno) {
+            return /\d/.test(terreno) && (terreno.match(/\d+(?:[.,]\d+)?/g) || [])
+                .some(numero => Number(numero.replace(",", ".")) > 0);
+        }
+async function enviarCotizacionPeru(boton) {
+    if (envioSospechosamenteRapido("form-peru")) return; // posible bot
+
+    const nombre   = sanitizarTexto(document.getElementById("peru-nombre").value);
+    const apellido = sanitizarTexto(document.getElementById("peru-apellido").value);
+    const correo   = sanitizarTexto(document.getElementById("peru-correo").value);
+    const celular  = document.getElementById("peru-celular").value.trim().replace(/\D/g, "").slice(0, 9);
+    const terreno  = document.getElementById("peru-terreno").value.trim();
+    const distrito = sanitizarTexto(document.getElementById("peru-distrito").value);
+
+    const depto     = document.querySelector("#form-peru select").value;
+    const inversion = document.querySelector("#inversion-peru .opcion-inversion.seleccionado")?.dataset.valor || "";
+
+    const fecha   = document.querySelector("#calendario-peru .dia.seleccionado")?.textContent || "";
+    const mesAnio = document.querySelector("#calendario-peru .calendario-header span")?.textContent || "";
+    const horario = document.querySelector("#horarios-peru .horario-btn.seleccionado")?.textContent || "";
+
+    if (!nombre || !apellido || !correo || !celular || !terreno || !depto || !distrito) {
+        mostrarAviso("Por favor completa todos los campos antes de enviar.", "⚠️");
+        return;
+    }
+    if (!correoValido(correo)) {
+        mostrarAviso("Por favor ingresa un correo electrónico válido.", "⚠️");
+        return;
+    }
+    if (celular.length !== 9) {
+        mostrarAviso("Por favor ingresa un número de celular válido (9 dígitos).", "⚠️");
+        return;
+    }
+    if (!terrenoValido(terreno)) {
+        mostrarAviso("Por favor ingresa un tamaño de terreno válido.", "⚠️");
+        return;
+    }
+    if (!inversion) {
+        mostrarAviso("Por favor responde si cuentas con la inversión mínima de 2500 soles.", "⚠️");
+        return;
+    }
+    if (inversion === "No") {
+        mostrarAviso("Aún no cuentas con el dinero mínimo para trabajar con nosotros.", "😔");
+        return;
+    }
+    if (!fecha) {
+        mostrarAviso("Por favor selecciona una fecha para la reunión.", "⚠️");
+        return;
+    }
+    if (!horario) {
+        mostrarAviso("Por favor selecciona un horario para la reunión.", "⚠️");
+        return;
+    }
+
+    await procesarEnvio({
+        pais: "Perú", nombre, apellido, correo,
+        celular: "(+51) " + celular, terreno, departamento: depto,
+        distrito, inversion_minima: inversion, fecha: fecha + " " + mesAnio, horario
+    }, boton);
+}
+
+async function enviarCotizacionOtro(boton) {
+    if (envioSospechosamenteRapido("form-otro")) return; // posible bot
+
+    const nombre    = sanitizarTexto(document.getElementById("otro-nombre").value);
+    const apellido  = sanitizarTexto(document.getElementById("otro-apellido").value);
+    const correo    = sanitizarTexto(document.getElementById("otro-correo").value);
+    const terreno   = document.getElementById("otro-terreno").value.trim();
+    const pais      = sanitizarTexto(document.querySelector("#select-pais option:checked").text);
+    const codigo    = document.getElementById("codigo-pais").value;
+    const celular   = document.getElementById("otro-celular").value.trim().replace(/\D/g, "").slice(0, 15);
+    const inversion = document.querySelector("#inversion-otro .opcion-inversion.seleccionado")?.dataset.valor || "";
+
+    const fecha   = document.querySelector("#calendario-otro .dia.seleccionado")?.textContent || "";
+    const mesAnio = document.querySelector("#calendario-otro .calendario-header span")?.textContent || "";
+    const horario = document.querySelector("#horarios-otro .horario-btn.seleccionado")?.textContent || "";
+
+    if (!nombre || !apellido || !correo || !terreno) {
+        mostrarAviso("Por favor completa todos los campos antes de enviar.", "⚠️");
+        return;
+    }
+    if (!correoValido(correo)) {
+        mostrarAviso("Por favor ingresa un correo electrónico válido.", "⚠️");
+        return;
+    }
+    if (!terrenoValido(terreno)) {
+        mostrarAviso("Por favor ingresa un tamaño de terreno válido.", "⚠️");
+        return;
+    }
+    if (pais === "Selecciona tu país" || !codigo) {
+        mostrarAviso("Por favor selecciona tu país.", "⚠️");
+        return;
+    }
+    if (!celular) {
+        mostrarAviso("Por favor ingresa tu número de celular.", "⚠️");
+        return;
+    }
+    if (!inversion) {
+        mostrarAviso("Por favor responde si cuentas con la inversión mínima de 450 USD.", "⚠️");
+        return;
+    }
+    if (inversion === "No") {
+        mostrarAviso("Aún no cuentas con el dinero mínimo para trabajar con nosotros.", "😔");
+        return;
+    }
+    if (!fecha) {
+        mostrarAviso("Por favor selecciona una fecha para la reunión.", "⚠️");
+        return;
+    }
+    if (!horario) {
+        mostrarAviso("Por favor selecciona un horario para la reunión.", "⚠️");
+        return;
+    }
+
+    await procesarEnvio({
+        pais, nombre, apellido, correo,
+        celular: "(" + codigo + ") " + celular, terreno,
+        departamento: "", distrito: "", inversion_minima: inversion, fecha: fecha + " " + mesAnio, horario
+    }, boton);
+}
+
+    </script>
+</body>
+</html>

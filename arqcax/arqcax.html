@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+    <title>ARQCAX</title>
+    <link rel="stylesheet" href="arqcax.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="logo-arqcax.png">
+    <style>
+        /* Mini ventana de avisos, igual que en cotiza.html */
+        .aviso-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .aviso-overlay.activo {
+            display: flex;
+        }
+
+        .aviso-caja {
+            background: rgb(35, 35, 35);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 28px 26px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            animation: avisoEntrada 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes avisoEntrada {
+            from { opacity: 0; transform: translateY(-18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .aviso-icono {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .aviso-mensaje {
+            color: white;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .aviso-btn {
+            background: aqua;
+            color: #111;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 10px 26px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s;
+        }
+
+        .aviso-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Enlaces nuevos: política de privacidad (arqcax.css no se modificó porque no se compartió) */
+        .privacidad a,
+        .footer-privacidad a {
+            color: aqua;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="aviso-overlay" id="aviso-overlay">
+        <div class="aviso-caja">
+            <div class="aviso-icono" id="aviso-icono">⚠️</div>
+            <div class="aviso-mensaje" id="aviso-mensaje"></div>
+            <button class="aviso-btn" onclick="cerrarAviso()">Aceptar</button>
+        </div>
+    </div>
+
+    <script>
+        function mostrarAviso(mensaje, icono) {
+            document.getElementById("aviso-mensaje").textContent = mensaje;
+            document.getElementById("aviso-icono").textContent = icono || "⚠️";
+            document.getElementById("aviso-overlay").classList.add("activo");
+        }
+
+        function cerrarAviso() {
+            document.getElementById("aviso-overlay").classList.remove("activo");
+        }
+
+        function mostrarProximamente() {
+            mostrarAviso("Estamos haciendo los planos de esta página.", "🛠️");
+        }
+
+        // Evita que la web se muestre embebida (clickjacking) en páginas de terceros.
+        if (window.self !== window.top) {
+            try { window.top.location = window.location.href; } catch (e) { document.documentElement.innerHTML = ""; }
+        }
+    </script>
+    <a class="logo" href="arqcax.html" aria-label="Inicio ARQCAX">
+        <img src="LOGO.png" alt="ARQCAX Arquitectura y Diseño">
+    </a>
+
+    <main>
+        <section id="galeria-proyectos" class="galeria-proyecto revelar" aria-label="Galería de proyectos">
+            <div class="carrusel">
+                <img id="imagen-proyecto" src="proyecto-casa-moderna.png" alt="Casa moderna diseñada por ARQCAX">
+                <button class="flecha flecha-izquierda" type="button" onclick="cambiarProyecto(-1)" aria-label="Imagen anterior">‹</button>
+                <button class="flecha flecha-derecha" type="button" onclick="cambiarProyecto(1)" aria-label="Imagen siguiente">›</button>
+            </div>
+            <div class="info-proyecto">
+                <span id="numero-proyecto">01 / 02</span>
+                <h1 id="titulo-proyecto">Casa contemporánea</h1>
+                <p id="descripcion-proyecto">Una vivienda de líneas limpias, piedra natural e iluminación cálida. El diseño prioriza amplitud, conexión visual y una fachada moderna.</p>
+                <a href="#sobre-este-proyecto" class="btn-proyecto">Sobre este proyecto</a>
+            </div>
+        </section>
+
+        <section id="sobre-nosotros" class="seccion-testimonios revelar">
+            <h1>Lo que dicen nuestros clientes</h1>
+            <div class="testimonios">
+                <article class="testimonio">
+                    <i class="fas fa-quote-left"></i>
+                    <p>Excelente atención y una propuesta que entendió exactamente lo que necesitábamos para nuestro hogar.</p>
+                    <span>— Cliente ARQCAX</span>
+                </article>
+                <article class="testimonio">
+                    <i class="fas fa-quote-left"></i>
+                    <p>El proceso fue claro, ordenado y profesional desde la primera reunión hasta la entrega.</p>
+                    <span>— Cliente ARQCAX</span>
+                </article>
+                <article class="testimonio">
+                    <i class="fas fa-quote-left"></i>
+                    <p>Nos ayudaron a aprovechar cada espacio con un diseño moderno y funcional.</p>
+                    <span>— Cliente ARQCAX</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="privacidad revelar">
+            <i class="fas fa-shield-alt"></i>
+            <p><strong>Tu privacidad importa.</strong> Los datos que brindes en la cotización se usarán únicamente para contactarte y atender tu solicitud. No vendemos ni compartimos tu información con terceros. <a href="privacidad.html">Ver política completa</a>.</p>
+        </section>
+    </main>
+
+    <div class="contenedor">
+        <button class="btn" type="button" onclick="mostrarProximamente()">SOBRE NOSOTROS</button>
+        <span class="separador-nav" aria-hidden="true"></span>
+        <button class="btn" type="button" onclick="mostrarProximamente()">GALERÍA</button>
+        <span class="separador-nav" aria-hidden="true"></span>
+        <a class="btn" href="cotiza.html">COTIZA AQUÍ</a>
+        <button class="btn btn-buscar" type="button" onclick="toggleBuscador()" aria-label="Abrir buscador"><i class="fas fa-search"></i></button>
+        <button class="btn btn-menu" type="button" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>
+    </div>
+
+    <div id="buscador" class="buscador" role="dialog" aria-label="Buscar en la página">
+        <form onsubmit="buscarEnPagina(event)">
+            <input id="texto-busqueda" type="search" placeholder="Buscar en ARQCAX" autocomplete="off" maxlength="80">
+            <button type="submit" aria-label="Buscar"><i class="fas fa-search"></i></button>
+            <button type="button" onclick="toggleBuscador()" aria-label="Cerrar buscador">✕</button>
+        </form>
+    </div>
+
+    <nav id="menu" class="menu-lateral" aria-label="Menú principal">
+        <button class="btn btn-cerrar" type="button" onclick="toggleMenu()" aria-label="Cerrar menú">✕</button>
+        <button class="btn" type="button" onclick="mostrarProximamente()">Servicios</button>
+        <button class="btn contacto-menu" type="button" onclick="toggleContacto()">Contacto</button>
+        <a id="numero-contacto" class="numero-contacto" href="https://wa.me/51968255952" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> +51 968 255 952</a>
+        <hr>
+        <a class="btn" href="https://www.instagram.com/arqcax/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
+        <a class="btn" href="https://www.facebook.com/Arqcax" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i> Facebook</a>
+        <a class="btn" href="https://www.tiktok.com/@arqcax" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i> TikTok</a>
+    </nav>
+
+    <footer>
+        <img src="LOGO.png" alt="ARQCAX Arquitectura y Diseño">
+        <div class="footer-enlaces">
+            <button class="btn" type="button" onclick="mostrarProximamente()">Sobre nosotros</button>
+            <a href="cotiza.html">Cotiza aquí</a>
+            <a href="https://wa.me/51968255952" target="_blank" rel="noopener noreferrer">Contacto</a>
+        </div>
+        <div class="footer-redes">
+            <a href="https://www.instagram.com/arqcax/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/Arqcax" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.tiktok.com/@arqcax" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p>© 2026 ARQCAX · Arquitectura y Diseño</p>
+        <p class="footer-privacidad">Tus datos se usan únicamente para responder a tu solicitud de cotización. <a href="privacidad.html">Política de Privacidad y Términos y Condiciones</a>.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById("menu").classList.toggle("activo");
+        }
+
+        function toggleContacto() {
+            document.getElementById("numero-contacto").classList.toggle("activo");
+        }
+
+        const proyectos = [
+            {
+                imagen: "proyecto-casa-moderna.png",
+                alt: "Casa contemporánea diseñada por ARQCAX",
+                titulo: "Casa contemporánea",
+                descripcion: "Una vivienda de líneas limpias, piedra natural e iluminación cálida. El diseño prioriza amplitud, conexión visual y una fachada moderna."
+            },
+            {
+                imagen: "proyecto-fachada-moderna.png",
+                alt: "Fachada moderna diseñada por ARQCAX",
+                titulo: "Fachada urbana",
+                descripcion: "Una propuesta sobria y funcional que combina ladrillo, metal y vegetación para crear una entrada cálida y contemporánea."
+            }
+        ];
+        let proyectoActual = 0;
+
+        function cambiarProyecto(direccion) {
+            proyectoActual = (proyectoActual + direccion + proyectos.length) % proyectos.length;
+            const proyecto = proyectos[proyectoActual];
+            const imagen = document.getElementById("imagen-proyecto");
+            imagen.classList.remove("cambiar");
+            void imagen.offsetWidth;
+            imagen.src = proyecto.imagen;
+            imagen.alt = proyecto.alt;
+            imagen.classList.add("cambiar");
+            document.getElementById("numero-proyecto").textContent = `0${proyectoActual + 1} / 0${proyectos.length}`;
+            document.getElementById("titulo-proyecto").textContent = proyecto.titulo;
+            document.getElementById("descripcion-proyecto").textContent = proyecto.descripcion;
+        }
+
+        function toggleBuscador() {
+            const buscador = document.getElementById("buscador");
+            buscador.classList.toggle("activo");
+            if (buscador.classList.contains("activo")) document.getElementById("texto-busqueda").focus();
+        }
+
+        function buscarEnPagina(evento) {
+            evento.preventDefault();
+            const termino = document.getElementById("texto-busqueda").value.trim();
+            if (termino) window.find(termino, false, false, true, false, false, false);
+        }
+
+        setInterval(() => cambiarProyecto(1), 10000);
+
+        const elementosEntrada = document.querySelectorAll(".revelar, footer");
+        const observadorEntrada = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                if (entrada.isIntersecting) {
+                    entrada.target.classList.add("visible");
+                    observadorEntrada.unobserve(entrada.target);
+                }
+            });
+        }, { threshold: 0.14 });
+        elementosEntrada.forEach((elemento) => observadorEntrada.observe(elemento));
+    </script>
+</body>
+</html>

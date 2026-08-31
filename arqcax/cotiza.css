@@ -1,0 +1,382 @@
+h1 {
+    cursor: pointer;
+    color: white;
+    font-family: arial;
+    display: inline-block;
+    margin: 16px 0 0 20px;
+}
+
+h1 img {
+    display: block;
+    width: 230px;
+    height: auto;
+}
+
+h2 {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin-right: 0px;
+    margin-top: 100px;
+    font-size: 30px;
+}
+
+body {
+    background: rgb(29, 29, 29);
+}
+
+.contenedor {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.separador-nav {
+    width: 1px;
+    height: 17px;
+    background: rgba(255, 255, 255, 0.45);
+}
+
+
+.btn {
+    cursor: pointer;
+    border: none;
+    font-family: arial;
+    color: white;
+    margin: 0;
+    background: none;
+    position: relative;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    color: aqua;
+}
+
+.btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    transition: width 0.3s ease;
+    transform: translateX(-50%);
+    background: aqua;
+}
+
+.btn:hover::after {
+    width: 100%;
+}
+
+.botones {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-right: 0px;
+    gap: 1px;
+}
+
+.bnt {
+    font-size: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 4px;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    font-weight: bold;
+    background: rgb(111, 106, 106);
+    padding: 40px;
+    position: relative;
+    transition: transform 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.bnt:hover {
+    transform: translateY(-3px);
+    color: aqua;
+}
+
+.bnt::after,
+.btn-cerrar-formulario::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    width: 0;
+    height: 2px;
+    transition: width 0.3s ease;
+    transform: translateX(-50%);
+    background: aqua;
+}
+
+.bnt:hover::after,
+.btn-cerrar-formulario:hover::after {
+    width: 55%;
+}
+
+
+.btn-cerrar-formulario {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.btn-cerrar-formulario::after {
+    bottom: 50%;
+    transform: translate(-50%, 50%);
+}
+
+
+.btn-cerrar-formulario:hover {
+    transform: translateY(-3px);
+    color: aqua !important;
+}
+
+.top-derecha {
+    display: contents;
+}
+
+.btn-menu {
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    right: -250px;
+    width: 250px;
+    height: 100%;
+    background: #222;
+    padding-top: 60px;
+    transition: right 0.3s ease;
+}
+
+.menu-lateral a {
+    display: block;
+    color: white;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.menu-lateral.activo {
+    right: 0;
+}
+
+.btn-cerrar {
+    position: absolute;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: white;
+    top: 20px;
+    left: 15px;
+    font-size: 20px;
+}
+
+a {
+    font-family: arial;
+}
+
+.formulario {
+    background: rgb(45, 45, 45);   /* fondo oscuro sólido */
+    border: 1px solid rgb(70, 70, 70);  /* borde visible */
+}
+
+.formulario input,
+.formulario select {
+    color: rgba(255, 255, 255, 0.6) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.formulario input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1;
+}
+
+.contacto-menu {
+    display: block;
+    width: max-content;
+    margin: 0;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.contacto-menu::after {
+    bottom: -2px;
+}
+
+.contacto-menu:hover::after {
+    width: 100%;
+}
+
+.numero-contacto {
+    display: none !important;
+    margin: -5px 0 15px 15px !important;
+    color: aqua;
+    font-size: 13px;
+}
+
+.numero-contacto.activo {
+    display: block !important;
+}
+
+.formulario input,
+.formulario select {
+    background: transparent !important;
+}
+
+/* Campo invisible anti-bots: no afecta a usuarios reales. */
+.campo-trampa {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.formulario select option {
+    background: rgb(45, 45, 45);
+    color: white;
+}
+
+.calendario {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    background: rgb(35, 35, 35);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.calendario-header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.calendario-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 0 10px;
+    position: relative;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.calendario-header button:hover {
+    transform: translateY(-3px);
+    color: white;
+}
+
+.calendario-header button::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    transition: width 0.3s ease;
+    transform: translateX(-50%);
+    background: aqua;
+}
+
+.calendario-header button:hover::after {
+    width: 100%;
+}
+
+.dia-nombre {
+    color: rgba(255,255,255,0.4);
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    text-align: center;
+    padding: 4px 0;
+}
+
+.dia {
+    background: rgb(55, 55, 55);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    padding: 8px 0;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.dia:hover {
+    background: rgb(0, 185, 185);
+    color: #111;
+}
+
+.dia.seleccionado {
+    background: aqua;
+    color: #111;
+    font-weight: bold;
+}
+
+.dia.deshabilitado {
+    background: rgb(40, 40, 40);
+    color: rgba(255,255,255,0.15);
+    cursor: not-allowed;
+}
+
+.dia.vacio {
+    background: none;
+    cursor: default;
+}
+
+.horarios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.horario-btn {
+    background: rgb(55, 55, 55);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.horario-btn:hover {
+    background: rgb(0, 185, 185);
+    color: #111;
+}
+
+.horario-btn.seleccionado {
+    background: aqua;
+    color: #111;
+    font-weight: bold;
+}
+
+.horario-btn.deshabilitado {
+    background: rgb(40, 40, 40);
+    color: rgba(255,255,255,0.3);
+    cursor: not-allowed;
+}
+
