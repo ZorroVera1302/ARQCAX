@@ -1032,6 +1032,7 @@ async function enviarCotizacionOtro(boton) {
     const fecha   = document.querySelector("#calendario-otro .dia.seleccionado")?.textContent || "";
     const mesAnio = document.querySelector("#calendario-otro .calendario-header span")?.textContent || "";
     const horario = document.querySelector("#horarios-otro .horario-btn.seleccionado")?.textContent || "";
+    const fechaISO = document.getElementById("horarios-otro").dataset.fecha || "";
 
     if (!nombre || !apellido || !correo || !terreno) {
         mostrarAviso("Por favor completa todos los campos antes de enviar.", "⚠️");
@@ -1070,11 +1071,16 @@ async function enviarCotizacionOtro(boton) {
         return;
     }
 
-    await procesarEnvio({
-        pais, nombre, apellido, correo,
-        celular: "(" + codigo + ") " + celular, terreno,
-        departamento: "", distrito: "", inversion_minima: inversion, fecha: fecha + " " + mesAnio, horario
-    }, boton);
+await procesarEnvio({
+    pais, nombre, apellido, correo,
+    celular: "(" + codigo + ") " + celular, terreno,
+    departamento: "",
+    distrito: "",
+    inversion_minima: inversion,
+    fecha: fecha + " " + mesAnio,
+    fechaISO,
+    horario
+}, boton);
 }
 
     </script>
