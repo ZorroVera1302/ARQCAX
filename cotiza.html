@@ -972,6 +972,7 @@ async function enviarCotizacionPeru(boton) {
     const fecha   = document.querySelector("#calendario-peru .dia.seleccionado")?.textContent || "";
     const mesAnio = document.querySelector("#calendario-peru .calendario-header span")?.textContent || "";
     const horario = document.querySelector("#horarios-peru .horario-btn.seleccionado")?.textContent || "";
+    const fechaISO = document.getElementById("horarios-peru").dataset.fecha || "";
 
     if (!nombre || !apellido || !correo || !celular || !terreno || !depto || !distrito) {
         mostrarAviso("Por favor completa todos los campos antes de enviar.", "⚠️");
@@ -1006,11 +1007,14 @@ async function enviarCotizacionPeru(boton) {
         return;
     }
 
-    await procesarEnvio({
-        pais: "Perú", nombre, apellido, correo,
-        celular: "(+51) " + celular, terreno, departamento: depto,
-        distrito, inversion_minima: inversion, fecha: fecha + " " + mesAnio, horario
-    }, boton);
+await procesarEnvio({
+    pais: "Perú", nombre, apellido, correo,
+    celular: "(+51) " + celular, terreno, departamento: depto,
+    distrito, inversion_minima: inversion,
+    fecha: fecha + " " + mesAnio,
+    fechaISO,
+    horario
+}, boton);
 }
 
 async function enviarCotizacionOtro(boton) {
