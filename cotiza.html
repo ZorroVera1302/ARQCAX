@@ -944,6 +944,16 @@ async function procesarEnvio(datos, boton) {
             body: JSON.stringify(datos)
         });
 
+        if (datos.fechaISO && datos.horario) {
+    reservasConfirmadas.add(`${datos.fechaISO}|${datos.horario}`);
+
+    ["horarios-peru", "horarios-otro"].forEach(id => {
+        if (document.getElementById(id).dataset.fecha) {
+            renderHorarios(id);
+        }
+    });
+}
+
         localStorage.setItem("arqcax_ultimo_envio", String(Date.now()));
         mostrarAviso("¡Tu cotización ha sido enviada con éxito! nuestro equipo se pondrá en contacto contigo.", "✅");
     } catch (error) {
