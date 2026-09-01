@@ -918,6 +918,12 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpVb8hidplAo
     console.warn("No se cargaron las reservas.");
 });
 
+        setInterval(() => {
+    cargarReservas().catch(() => {
+        console.warn("No se pudieron actualizar las reservas.");
+    });
+}, 30000);
+
 async function procesarEnvio(datos, boton) {
     const formulario = boton.closest(".formulario");
     const campoTrampa = formulario.querySelector(".campo-trampa");
