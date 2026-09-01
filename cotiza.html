@@ -648,6 +648,37 @@ const horariosMañana = ["10:00 AM","11:00 AM","12:00 PM"];
 const horariosTarde  = ["3:00 PM","4:00 PM","5:00 PM","6:00 PM"];
 const reservasTemporales = {};
 
+        const reservasConfirmadas = new Set();
+
+function cargarReservas() {
+    return new Promise((resolve, reject) => {
+        const callback = "reservas_" + Date.now();
+        const script = document.createElement("script");
+
+        window[callback] = (respuesta) => {
+            script.remove();
+            delete window[callback];
+
+            reservasConfirmadas.clear();
+            (respuesta.reservas || []).forEach(reserva =>
+                reservasConfirmadas.add(reserva)
+            );
+
+            ["horarios-peru", "horarios-otro"].forEach(id => {
+                if (document.getElementById(id).dataset.fecha) {
+                    renderHorarios(id);
+                }
+            });
+
+            resolve();
+        };
+
+        script.onerror = () => reject(new Error("No se pudieron cargar las reservas."));
+        script.src = GOOGLE_SCRIPT_URL + "?callback=" + callback + "&_=" + Date.now();
+        document.head.appendChild(script);
+    });
+}
+
 // Feriados nacionales del Perú 2026 (fuente: gob.pe). No se atiende en estas fechas.
 // Nota: si el calendario avanza a otro año, los feriados de fecha móvil (Semana Santa)
 // deben actualizarse manualmente.
