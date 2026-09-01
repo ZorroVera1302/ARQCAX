@@ -380,3 +380,169 @@ a {
     cursor: not-allowed;
 }
 
+@media (max-width: 700px) {
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding-top: 72px;
+        overflow-x: hidden;
+    }
+
+    h1 {
+        display: block;
+        margin: 12px auto 18px;
+        text-align: center;
+    }
+
+    h1 img {
+        width: min(190px, 60vw);
+        margin: auto;
+    }
+
+    h2 {
+        margin: 0 16px 18px;
+        font-size: 25px;
+        line-height: 1.2;
+    }
+
+    /* Barra de arriba para celular */
+    .contenedor {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 1000;
+        min-height: 64px;
+        padding: 10px 14px;
+        justify-content: space-between;
+        background: rgb(29, 29, 29);
+    }
+
+    .contenedor > .btn:not(:first-child),
+    .separador-nav {
+        display: none;
+    }
+
+    .top-derecha {
+        display: block;
+        margin-left: auto;
+    }
+
+    .btn,
+    .btn-menu {
+        min-height: 44px;
+        padding: 10px 12px;
+    }
+
+    .menu-lateral {
+        width: min(86vw, 340px);
+        right: -340px;
+        padding-top: 62px;
+    }
+
+    .menu-lateral .btn,
+    .menu-lateral a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .botones {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: calc(100% - 32px);
+        max-width: 480px;
+        margin: 0 auto;
+        gap: 10px;
+    }
+
+    .bnt {
+        min-height: 52px;
+        padding: 12px 8px;
+        font-size: 17px;
+    }
+
+    .formulario-wrapper {
+        margin-top: 20px;
+        padding: 0 12px 38px;
+    }
+
+    .formulario {
+        width: 100%;
+        padding: 22px 16px 24px;
+        gap: 14px;
+        border-radius: 14px;
+    }
+
+    .formulario h3 {
+        font-size: 18px;
+        line-height: 1.3;
+    }
+
+    .formulario input,
+    .formulario select {
+        min-height: 48px;
+        font-size: 16px; /* evita zoom automático en iPhone */
+    }
+
+    .btn-enviar,
+    .opcion-inversion {
+        min-height: 48px;
+        font-size: 16px;
+    }
+
+    .btn-cerrar-formulario {
+        width: 44px !important;
+        height: 44px !important;
+    }
+
+    .calendario {
+        width: 100%;
+        gap: 4px;
+        padding: 12px 8px;
+    }
+
+    .calendario-header {
+        min-height: 44px;
+        margin-bottom: 4px;
+    }
+
+    .calendario-header button,
+    .dia {
+        min-width: 0;
+        min-height: 40px;
+    }
+
+    .horario-btn {
+        flex: 1 1 92px;
+        min-height: 44px;
+    }
+
+    footer {
+        margin-top: 28px;
+        padding: 32px 16px 24px;
+    }
+}
+
+@media (max-width: 380px) {
+    .formulario {
+        padding-inline: 13px;
+    }
+
+    .dia-nombre {
+        font-size: 10px;
+    }
+
+    .dia {
+        min-height: 36px;
+        padding: 4px 0;
+        font-size: 13px;
+    }
+
+    .horario-btn {
+        flex-basis: 100%;
+    }
+}
