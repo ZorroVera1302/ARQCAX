@@ -914,6 +914,9 @@ setInterval(() => {
     });
 }, 60000);
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpVb8hidplAojfMfPnSnVuzgh6PHf6u4JnvyLd7g2nZc8ZZkCKROduduYzxrbeJTiO/exec";
+        cargarReservas().catch(() => {
+    console.warn("No se cargaron las reservas.");
+});
 
 async function procesarEnvio(datos, boton) {
     const formulario = boton.closest(".formulario");
