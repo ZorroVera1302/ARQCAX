@@ -880,7 +880,7 @@ function renderHorarios(idHorarios) {
 
         boton.className = "horario-btn";
         boton.textContent = hora;
-        if (horaPasada || reservadoEnOtroFormulario) {
+        if (horaPasada || reservadoEnOtroFormulario || reservadoGlobalmente) {
             boton.classList.add("deshabilitado");
             boton.disabled = true;
             boton.title = horaPasada
