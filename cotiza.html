@@ -874,6 +874,7 @@ function renderHorarios(idHorarios) {
         const clave = `${fechaISO}|${hora}`;
         const boton = document.createElement("button");
         const reservadoEnOtroFormulario = reservasTemporales[otraLista] === clave;
+        const reservadoGlobalmente = reservasConfirmadas.has(clave);
         const horaPasada = esHoraPasadaHoy(fechaISO, hora);
         if (horaPasada && reservasTemporales[idHorarios] === clave) delete reservasTemporales[idHorarios];
 
