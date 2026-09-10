@@ -985,7 +985,7 @@ async function enviarCotizacionPeru(boton) {
     const terreno  = document.getElementById("peru-terreno").value.trim();
     const distrito = sanitizarTexto(document.getElementById("peru-distrito").value);
 
-    const depto     = document.querySelector("#form-peru select").value;
+    const depto = document.getElementById("peru-departamento").value.trim();
     const inversion = document.querySelector("#inversion-peru .opcion-inversion.seleccionado")?.dataset.valor || "";
 
     const fecha   = document.querySelector("#calendario-peru .dia.seleccionado")?.textContent || "";
