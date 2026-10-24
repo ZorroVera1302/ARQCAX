@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
     <title>Cotiza tu proyecto</title>
@@ -709,8 +709,9 @@ function esFechaDisponible(fechaISO, fecha, hoy) {
     const diaSemana = fecha.getDay();
     const esFinDeSemana = diaSemana === 0 || diaSemana === 6;
     const esPasado = fecha < new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-    const esFeriado = feriados.includes(fechaISO);
-    return !(esFinDeSemana || esPasado || esFeriado);
+    // Los fines de semana se permiten incluso si coinciden con un feriado.
+    const esFeriado = !esFinDeSemana && feriados.includes(fechaISO);
+    return !(esPasado || esFeriado);
 }
 
 function crearCalendario(idCalendario, idHorarios) {
@@ -930,7 +931,10 @@ async function procesarEnvio(datos, boton) {
     const ultimoEnvio = Number(localStorage.getItem("arqcax_ultimo_envio") || 0);
 
     // Los bots suelen llenar campos invisibles; las personas nunca los ven.
-    if (campoTrampa.value) return;
+    if (campoTrampa.value) {
+        mostrarAviso("No se pudo procesar el formulario. Recarga la página e inténtalo nuevamente.", "⚠️");
+        return;
+    }
     if (Date.now() - ultimoEnvio < 60000) {
         mostrarAviso("Por seguridad, espera un minuto antes de enviar otra cotización.", "⏳");
         return;
@@ -976,7 +980,7 @@ async function procesarEnvio(datos, boton) {
                 .some(numero => Number(numero.replace(",", ".")) > 0);
         }
 async function enviarCotizacionPeru(boton) {
-    if (envioSospechosamenteRapido("form-peru")) return; // posible bot
+    
 
     const nombre   = sanitizarTexto(document.getElementById("peru-nombre").value);
     const apellido = sanitizarTexto(document.getElementById("peru-apellido").value);
@@ -1037,7 +1041,7 @@ await procesarEnvio({
 }
 
 async function enviarCotizacionOtro(boton) {
-    if (envioSospechosamenteRapido("form-otro")) return; // posible bot
+    
 
     const nombre    = sanitizarTexto(document.getElementById("otro-nombre").value);
     const apellido  = sanitizarTexto(document.getElementById("otro-apellido").value);
